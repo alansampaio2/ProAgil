@@ -29,6 +29,8 @@ namespace ProAgil.API
         {
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            //CONFIGURAÇÃO DO CORS
+            services.AddCors(); //configurado a permissão de solicitação cruzada
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +47,9 @@ namespace ProAgil.API
             }
 
             // app.UseHttpsRedirection();
+
+            // ESSA CHAMADA TEM QUE SER ANTES DO app.UseMvc()
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()); // PERMITO TODA ORIGEM, MÉTODO E CABEÇALHO
             app.UseMvc();
         }
     }
