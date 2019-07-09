@@ -50,6 +50,7 @@ namespace ProAgil.API
 
             // ESSA CHAMADA TEM QUE SER ANTES DO app.UseMvc()
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()); // PERMITO TODA ORIGEM, MÉTODO E CABEÇALHO
+            app.UseStaticFiles();
             app.UseMvc();
         }
     }
