@@ -1,3 +1,5 @@
+using System;
+
 namespace ProAgil.Domain
 {
     public class Lote

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace ProAgil.Domain
 {
     public class Palestrante
