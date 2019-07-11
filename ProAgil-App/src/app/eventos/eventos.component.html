@@ -12,7 +12,9 @@
   <thead class="thead-light">
     <tr>
       <th>
-        <button class="btn btn-outline-primary" (click)="aleternarImagem()">Mostrar Imagem</button>
+        <button class="btn btn-outline-primary" (click)="aleternarImagem()">
+          <i class="{{mostrarImagem ? 'fa fa-eye-slash' : 'fa fa-eye'}}"></i>
+        </button>
       </th>
       <th>#</th>
       <th>Tema</th>
@@ -33,9 +35,16 @@
       <td>{{ evento.id }}</td>
       <td>{{ evento.tema }}</td>
       <td>{{ evento.local }}</td>
-      <td>{{ evento.dataEvento }}</td>
+      <td>{{ evento.dataEvento | DateTimeFormatPipe }}</td>
       <td>{{ evento.qtdPessoas }}</td>
-      <td>{{ evento.lote | uppercase }}</td>
+      <td>
+        <div *ngIf="!evento.lotes.length">
+          Não Informado
+        </div>
+        <div *ngIf="evento.lotes.length">
+          {{ evento.lotes[0].nome | uppercase }}
+        </div>  
+      </td>
       <td>
         <button class="btn btn-success"></button>
         <button class="btn btn-danger"></button>
