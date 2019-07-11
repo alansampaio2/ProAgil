@@ -7,6 +7,8 @@ using ProAgil.Repository;
 
 namespace ProAgil.API.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class EventoController : ControllerBase
     {
         private readonly IProAgilRepository _repo;
