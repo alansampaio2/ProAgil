@@ -4,7 +4,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 // NGX BOOTSTRAP
-import { ModalModule, TooltipModule, BsDropdownModule } from 'ngx-bootstrap';
+import { ModalModule, TooltipModule, BsDropdownModule, BsDatepickerModule } from 'ngx-bootstrap';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -22,12 +23,14 @@ import { EventoService } from './_services/evento.service';
    ],
    imports: [
       BrowserModule,
+      BsDropdownModule.forRoot(),
+      BrowserAnimationsModule,
+      BsDatepickerModule.forRoot(),
+      TooltipModule.forRoot(),
+      ModalModule.forRoot(),
       AppRoutingModule,
       HttpClientModule,
       FormsModule,
-      BsDropdownModule.forRoot(),
-      TooltipModule.forRoot(),
-      ModalModule.forRoot(),
       ReactiveFormsModule
    ],
    providers: [

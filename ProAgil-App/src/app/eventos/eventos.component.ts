@@ -4,6 +4,10 @@ import { Evento } from '../_models/Evento';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 
+// PARA DATEPICKER PT-BR
+import { defineLocale, BsLocaleService, ptBrLocale } from 'ngx-bootstrap';
+defineLocale('pt-br', ptBrLocale);
+
 @Component({
   selector: 'app-eventos',
   templateUrl: './eventos.component.html',
@@ -23,17 +27,22 @@ export class EventosComponent implements OnInit {
 
   eventosFiltrados: Evento[];
   eventos: Evento[];
+  evento: Evento;
+  modoSalvar = 'post';
   imagemLargura = 50;
   imagemMargem = 2;
   mostrarImagem = false;
-  modalRef: BsModalRef;
   registerForm: FormGroup; // PARA USAR O FORMULÁRIO (será o nome do formulario)
+  bodyDeletarEvento = '';
 
   constructor(
     private eventoService: EventoService,
     private modalService: BsModalService,
-    private fb: FormBuilder
-    ) { }
+    private fb: FormBuilder,
+    private localeService: BsLocaleService
+    ) {
+      this.localeService.use('pt-br');
+    }
 
   ngOnInit() {    // O ngOnInit É CHAMADO ANTES DE CARREGAR O HTML
     this.validation();
@@ -61,12 +70,35 @@ export class EventosComponent implements OnInit {
     });
   }
 
-  openModal(template: TemplateRef<any>) {
-    this.modalRef = this.modalService.show(template);
+  openModal(template: any) {
+    this.registerForm.reset();
+    template.show();
   }
 
-  salvarAlteracao() {
-
+  salvarAlteracao(template: any) {
+    if (this.registerForm.valid) {
+      if (this.modoSalvar === 'post') {
+        this.evento = Object.assign({}, this.registerForm.value);
+        this.eventoService.postEvento(this.evento).subscribe(
+          (novoEvento: Evento) => {
+            template.hide();
+            this.getEventos();
+          }, error => {
+            console.log(error);
+          }
+        );
+      } else {
+        this.evento = Object.assign({ id: this.evento.id }, this.registerForm.value);
+        this.eventoService.putEvento(this.evento).subscribe(
+          () => {
+            template.hide();
+            this.getEventos();
+          }, error => {
+            console.log(error);
+          }
+        );
+      }
+    }
   }
 
   validation() {
@@ -79,6 +111,35 @@ export class EventosComponent implements OnInit {
       telefone: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]]
     });
+  }
+
+  editarEvento(evento: Evento, template: any) {
+    this.modoSalvar = 'put';
+    this.openModal(template); // ABRIR MEU MODAL PASSANDO MEU TEMPLATE
+    this.evento = evento; // PASSO O EVENTO ATUAL PARA A MINHA VARIÁVEL evento (criada lá emcima)
+    this.registerForm.patchValue(evento); // PASSOS OS DADOS PARA O FORMULÁRIO
+  }
+
+  novoEvento(template: any) {
+    this.modoSalvar = 'post';
+    this.openModal(template); // ABRIR MEU MODAL PASSANDO MEU TEMPLATE
+  }
+
+  excluirEvento(evento: Evento, template: any) {
+    this.openModal(template);
+    this.evento = evento;
+    this.bodyDeletarEvento = `Tem certeza que deseja excluir o Evento: ${evento.tema}, Código: ${evento.id}`;
+  }
+
+  confirmeDelete(template: any) {
+    this.eventoService.deleteEvento(this.evento.id).subscribe(
+      () => {
+        template.hide();
+        this.getEventos();
+      }, error => {
+        console.log(error);
+      }
+    );
   }
 
 }
