@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ProAgil.Repository;
 using ProAgil.Repository.Data;
+using AutoMapper;
 
 namespace ProAgil.API
 {
@@ -30,6 +31,8 @@ namespace ProAgil.API
         {
             services.AddDbContext<ProAgilContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IProAgilRepository, ProAgilRepository>(); 
+            // AUTO MAPPER
+            services.AddAutoMapper();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             //CONFIGURAÇÃO DO CORS
             services.AddCors(); //configurado a permissão de solicitação cruzada
