@@ -6,6 +6,8 @@ using ProAgil.Domain;
 using ProAgil.Repository;
 using AutoMapper;
 using ProAgil.API.DTO;
+using System.IO;
+using System.Net.Http.Headers;
 
 namespace ProAgil.API.Controllers {
     [Route ("api/[controller]")]
@@ -109,8 +111,10 @@ namespace ProAgil.API.Controllers {
         }
 
         [HttpDelete ("{EventoId}")]
-        public async Task<IActionResult> Delete (int EventoId) {
-            try {
+        public async Task<IActionResult> Delete (int EventoId) 
+        {
+            try 
+            {
                 var evento = await _repo.GetEventoAsyncById (EventoId, false);
                 if (evento == null) return NotFound ();
 
@@ -119,12 +123,43 @@ namespace ProAgil.API.Controllers {
                 if (await _repo.SaveChangesAsync ()) {
                     return Ok ();
                 }
-            } catch (System.Exception) {
+            } 
+            catch (System.Exception) 
+            {
                 return this.StatusCode (StatusCodes.Status500InternalServerError, "Banco Dados Falhou");
             }
 
             return BadRequest ();
         }
 
+        [HttpPost("upload")]
+        public async Task<IActionResult> Upload()
+        {
+            try
+            {
+                var file = Request.Form.Files[0];
+                var folderName = Path.Combine("Resources", "Images");
+                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+                if (file.Length > 0)
+                {
+                    var filename = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName;
+                    var fullPath = Path.Combine(pathToSave, filename.Replace("\"", " ").Trim());
+
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        file.CopyTo(stream);
+                    }
+                }
+
+                return Ok();
+            }
+            catch (System.Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"Banco Dados Falhou {ex.Message}");
+            }
+
+            return BadRequest("Erro ao tentar realizar upload");
+        }
     }
 }
